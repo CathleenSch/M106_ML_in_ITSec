@@ -1,8 +1,18 @@
 import re
+import whois
+import requests
+from datetime import date, datetime
+from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
+url_shortening_services = ['7.ly', 'adf.ly', 'admy.link', 'al.ly', 'bc.v', 'bit.do', 'doiop.com', 'fur.ly', 'fave.co', 'is.gd', 'lnked.in', 'lynk.my', 'mcaf.ee', 'ouo.io', 'ow.ly', 'ph.dog', 'qr.net', 's.id', 'shrinkee.com', 'shrinkurl.in', 'sptfy.com', 'thinfi.com', 'tiny.cc', 'tinyurl.com', 'tny.im', 'flic.kr', 'v.gd', 'y2u.be', 'zi.ma', 'zzb.bz', 'adfoc.us', 'bit.ly', 'cur.lv', 'git.io', 'goo.gl', 'hec.su', 'sh.st', 'tldrify.com', 'tr.im']
 
 def check_having_IP_Address(url):
-    return 0
+    result = re.search('(?<=\/\/)(([0-9]+x?[A-z0-9]+)\.?)+', url)
+    if result:
+        return 1
+    else:
+        return -1
 
 def check_URL_Length(url):
     length = len(url)
@@ -15,7 +25,10 @@ def check_URL_Length(url):
         return 1
 
 def check_Shortening_Service(url):
-    return 0
+    for name in url_shortening_services:
+        if name in url:
+            return 1
+    return -1
 
 def check_having_At_symbol(url):
     if '@' in url:
@@ -60,10 +73,32 @@ def check_having_Sub_Domain(url):
 def check_SSLfinal_State(url):
     return 0
 
-def check_Domain_registeration_length(url):
-    return 0
+def check_Domain_registration_length(url):
+    w = whois.whois(url)
+    expires = w.expiration_date
+    if isinstance(expires, list):
+        expires = expires[0]
+    today = datetime.today()
+    delta = expires - today
+    print(delta)
+    if delta.days <= 365:
+        return 1
+    else:
+        return -1
 
 def check_Favicon(url):
+    """
+    domain = 'http://' + urlparse(url).netloc
+    page = requests.get(domain)
+    soup = BeautifulSoup(page.text, features="lxml")
+    icon_link = soup.find("link", rel="shortcut icon")
+    if icon_link is None:
+        icon_link = soup.find("link", rel="icon")
+    if icon_link is None:
+        return domain + '/favicon.ico'
+    icon = icon_link["href"]
+    print(icon)
+    """
     return 0
 
 def check_port(url):
@@ -133,4 +168,5 @@ def check_Links_pointing_to_page(url):
 
 def check_Statistical_report(url):
     return 0
+
 

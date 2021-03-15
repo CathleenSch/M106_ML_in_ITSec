@@ -1,4 +1,6 @@
 from extract_features import *
+import os
+URL_lists_folder = r'C:\Users\Work\Documents\M106\Hausarbeit\Praxisteil\M106_ML_in_ITSec\URLs'
 
 valid_sites_file = 'valid_sites.txt'
 phishing_sites_file = 'phishing_sites.txt'
@@ -22,8 +24,8 @@ def get_features(url):
     list_of_features += ',' + str(having_Sub_Domain)
     SSLfinal_State = check_SSLfinal_State(url)
     list_of_features += ',' + str(SSLfinal_State)
-    Domain_registeration_length = check_Domain_registeration_length(url)
-    list_of_features += ',' + str(Domain_registeration_length)
+    Domain_registration_length = check_Domain_registration_length(url)
+    list_of_features += ',' + str(Domain_registration_length)
     Favicon = check_Favicon(url)
     list_of_features += ',' + str(Favicon)
     port = check_port(url)
@@ -78,16 +80,18 @@ def empty_trainingdata_file():
 empty_trainingdata_file()
 file_trainingdata = open(trainingdata_file, encoding='utf-8', mode='a')
 
-file_phishing = open(phishing_sites_file, encoding='utf-8', mode='r')
+file_phishing = open(os.path.join(URL_lists_folder, phishing_sites_file), encoding='utf-8', mode='r')
 phishing_urls = file_phishing.readlines()
 for url in phishing_urls:
+    url = url[:len(url)-2]
+    # print(url[:len(url)-2])
     features = get_features(url)
     Result = 1
     features += ',' + str(Result) + '\n'
     file_trainingdata.write(features)
 file_phishing.close()
 
-file_valid = open(valid_sites_file, encoding='utf-8', mode='r')
+file_valid = open(os.path.join(URL_lists_folder, valid_sites_file), encoding='utf-8', mode='r')
 valid_urls = file_valid.readlines()
 for url in valid_urls:
     features = get_features(url)
