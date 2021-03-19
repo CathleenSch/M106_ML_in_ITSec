@@ -1,4 +1,5 @@
 from extract_features import *
+from helpers import *
 import os
 URL_lists_folder = r'C:\Users\Work\Documents\M106\Hausarbeit\Praxisteil\M106_ML_in_ITSec\URLs'
 
@@ -6,7 +7,7 @@ valid_sites_file = 'valid_sites.txt'
 phishing_sites_file = 'phishing_sites.txt'
 trainingdata_file = 'trainingdata.txt'
 
-def get_features(url):
+def get_features(url, response):
     list_of_features = ''
     having_IP_Address = check_having_IP_Address(url)
     list_of_features += str(having_IP_Address)
@@ -32,11 +33,11 @@ def get_features(url):
     list_of_features += ',' + str(port)
     HTTPS_token = check_HTTPS_token(url)
     list_of_features += ',' + str(HTTPS_token)
-    Request_URL = check_Request_URL(url)
+    Request_URL = check_Request_URL(url, response)
     list_of_features += ',' + str(Request_URL)
-    URL_of_Anchor = check_URL_of_Anchor(url)
+    URL_of_Anchor = check_URL_of_Anchor(url, response)
     list_of_features += ',' + str(URL_of_Anchor)
-    Links_in_tags = check_Links_in_tags(url)
+    Links_in_tags = check_Links_in_tags(url, response)
     list_of_features += ',' + str(Links_in_tags)
     SFH = check_SFH(url)
     list_of_features += ',' + str(SFH)
@@ -44,7 +45,7 @@ def get_features(url):
     list_of_features += ',' + str(Submitting_to_email)
     Abnormal_URL = check_Abnormal_URL(url)
     list_of_features += ',' + str(Abnormal_URL)
-    Redirect = check_Redirect(url)
+    Redirect = check_Redirect(response)
     list_of_features += ',' + str(Redirect)
     on_mouseover = check_on_mouseover(url)
     list_of_features += ',' + str(on_mouseover)
@@ -78,26 +79,42 @@ def empty_trainingdata_file():
 
 
 empty_trainingdata_file()
-file_trainingdata = open(trainingdata_file, encoding='utf-8', mode='a')
 
 file_phishing = open(os.path.join(URL_lists_folder, phishing_sites_file), encoding='utf-8', mode='r')
 phishing_urls = file_phishing.readlines()
-for url in phishing_urls:
+for index, url in enumerate(phishing_urls):
+    if index == 0:
+        file_trainingdata = open(trainingdata_file, encoding='utf-8', mode='w')
+    else:
+        file_trainingdata = open(trainingdata_file, encoding='utf-8', mode='a')
+    print(f'Processing phishing URL {index+1} of {len(phishing_urls)}: {url}')
     url = url[:len(url)-2]
-    # print(url[:len(url)-2])
-    features = get_features(url)
+    response = get_request(url)
+    if response == None:
+        print('URL not available, skipping')
+        continue
+    features = get_features(url, response)
     Result = 1
-    features += ',' + str(Result) + '\n'
-    file_trainingdata.write(features)
-file_phishing.close()
+    if '-2' in features:
+        continue
+    else:
+        features += ',' + str(Result) + '\n'
+        file_trainingdata.write(features)
+    file_phishing.close()
 
 file_valid = open(os.path.join(URL_lists_folder, valid_sites_file), encoding='utf-8', mode='r')
+file_trainingdata = open(trainingdata_file, encoding='utf-8', mode='a')
+
 valid_urls = file_valid.readlines()
-for url in valid_urls:
+for index, url in enumerate(valid_urls):
+    print(f'Processing valid URL {index+1} of {len(valid_urls)}: {url}')
     features = get_features(url)
     Result = 0
-    features += ',' + str(Result) + '\n'
-    file_trainingdata.write(features)
+    if '-2' in features:
+        continue
+    else:
+        features += ',' + str(Result) + '\n'
+        file_trainingdata.write(features)
 file_valid.close()
 
 file_trainingdata.close()
