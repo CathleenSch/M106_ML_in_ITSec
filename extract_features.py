@@ -253,29 +253,46 @@ def check_Redirect(res):
     else:
         return -1
 
-def check_on_mouseover(url):
-    return 0
+def check_on_mouseover(url, res):
+    print('checking for status bar change onMouseover')
+    html = res.text
+    if 'onmouseover="window.status=' in html:
+        return 1
+    else:
+        return -1
 
-def check_RightClick(url):
-    try:
-        res = requests.get(url)
-        html = res.text
-        print(html)
-        if 'event.button==2' in html:
-            print('yes')
-            return 1
-        else:
-            print('no')
-            return -1
-    except:
-        print('failure')
-        return -2
+def check_RightClick(url, res):
+    print('checking for right click prevention')
+    html = res.text
+    print(html)
+    if 'event.button==2' in html:
+        print('yes')
+        return 1
+    else:
+        print('no')
+        return -1
 
 def check_popUpWindow(url):
     return 0
 
-def check_Iframe(url):
-    return 0
+def check_Iframe(url, res):
+    print('checking for iframes with external content')
+    hostname = parse.urlparse(url).hostname
+    html = res.text
+    soup = bs4.BeautifulSoup(html, 'html.parser')
+    iframes = soup.findAll('iframe')
+    malicious_iframes_found = 0
+    for iframe in iframes:
+        link = iframe.get('src')
+        if link and link.startswith('http'):
+            link_hostname = parse.urlparse(link)
+            if link_hostname != hostname:
+                malicious_iframes_found = 1
+    
+    if malicious_iframes_found == 1:
+        return 1
+    else:
+        return -1
 
 def check_age_of_domain(url):
     print('checking for domain age\n')
