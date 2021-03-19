@@ -2,6 +2,7 @@ import re
 import bs4
 import whois
 import requests
+import asyncio
 from helpers import *
 from datetime import date, datetime
 from urllib import parse
@@ -116,16 +117,13 @@ def check_Favicon(url): # TODO
     """
     return 0
 
-def check_port(url):
+async def check_port(url):
     print('checking for open ports')
     ports = [21, 22, 23, 445, 1433, 1521, 3306, 3389]
-    ports_open = []
     try:
         host = whois.whois(url).domain_name
-        for port in ports:
-            ports_open.append(isPortOpen(host, port))
-        
-        if 1 in ports_open:
+        open_ports = await asyncio.gather(*(isPortOpen(host, port) for port in ports))        
+        if 1 in open_ports:
             ret = 1
         else:
             ret = -1
@@ -329,4 +327,3 @@ def check_Links_pointing_to_page(url):
 def check_Statistical_report(url):
     return 0
 
-check_RightClick('http://www.google.com')

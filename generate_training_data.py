@@ -1,6 +1,8 @@
 from extract_features import *
 from helpers import *
 import os
+import asyncio
+
 URL_lists_folder = r'C:\Users\Work\Documents\M106\Hausarbeit\Praxisteil\M106_ML_in_ITSec\URLs'
 
 valid_sites_file = 'valid_sites.txt'
@@ -29,7 +31,7 @@ def get_features(url, response):
     list_of_features += ',' + str(Domain_registration_length)
     Favicon = check_Favicon(url)
     list_of_features += ',' + str(Favicon)
-    port = check_port(url)
+    port = asyncio.run(check_port(url))
     list_of_features += ',' + str(port)
     HTTPS_token = check_HTTPS_token(url)
     list_of_features += ',' + str(HTTPS_token)
@@ -47,13 +49,13 @@ def get_features(url, response):
     list_of_features += ',' + str(Abnormal_URL)
     Redirect = check_Redirect(response)
     list_of_features += ',' + str(Redirect)
-    on_mouseover = check_on_mouseover(url)
+    on_mouseover = check_on_mouseover(url, response)
     list_of_features += ',' + str(on_mouseover)
-    RightClick = check_RightClick(url)
+    RightClick = check_RightClick(url, response)
     list_of_features += ',' + str(RightClick)
     popUpWindow = check_popUpWindow(url)
     list_of_features += ',' + str(popUpWindow)
-    Iframe = check_Iframe(url)
+    Iframe = check_Iframe(url, response)
     list_of_features += ',' + str(Iframe)
     age_of_domain = check_age_of_domain(url)
     list_of_features += ',' + str(age_of_domain)
