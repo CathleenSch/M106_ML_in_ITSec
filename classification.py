@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
-from phishing_classificaton import decision_tree_train_and_predict
+from phishing_classification import decision_tree_train_and_predict
 
 data_files = ['Sources/Training_Dataset.csv', 'trainingdata.csv']
 
@@ -26,7 +26,7 @@ def read_data(filename):
 def train_and_predict(features, labels):
     # Daten in Traings- und Testdaten unterteilen
     train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size = 0.25, random_state = 42)
-    
+
     # Modell instanziieren
     classifier = RandomForestClassifier(n_estimators = 1000, random_state = 42)
     # Trainieren
@@ -44,40 +44,25 @@ def train_and_predict(features, labels):
 
 for trainingdata_file in data_files:
     csv_data = read_data(trainingdata_file)
-    data = train_and_predict()
+    data_rf = train_and_predict(csv_data[0], csv_data[1])
+    data_dt = decision_tree_train_and_predict(trainingdata_file)
 
+    cm_rf = data_rf[0]
+    cm_dt = data_dt[0]
 
-csv_data = read_data('trainingdata.csv')
-data = train_and_predict('rf', csv_data[0], csv_data[1])
-accuracy = metrics.accuracy_score(data[4], data[3])
-print('Accuracy: ', str(accuracy), '%')
+    accuracy_rf = metrics.accuracy_score(data_rf[2], data_rf[1])
+    accuracy_dt = metrics.accuracy_score(data_dt[2], data_dt[1])
 
+    print(f'Random Forest, {trainingdata_file}')
+    print(f'Accuracy score: {round(100 * accuracy_rf, 2)}%')
+    print(f'Recall: {round(100 * cm_rf[0][0] / (cm_rf[0][0] + cm_rf[1][0]), 2)}')
+    print(f'Precision: {round(100 * cm_rf[0][0] / (cm_rf[0][0] + cm_rf[0][1]), 2)}')
+    print(f'NPV: {round(100 * cm_rf[1][0] / (cm_rf[1][0] + cm_rf[1][1]), 2)}')
+    print('\n')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-# Plotting
-print(rf_confusion_matrix)
-rf_recall = rf_confusion_matrix[0][0] / (rf_confusion_matrix[0][0] + rf_confusion_matrix[1][0])
-print(rf_recall)
-x = ['Random Forest', 'Logistic Regression']
-y_precision = [0.97, 0.92]
-plt.bar(x, y_precision, width=0.8, align='center')
-plt.xlabel('Algorithm used')
-plt.ylabel('Precision')
-
-# plt.show()
-"""
+    print(f'Decision Tree, {trainingdata_file}')
+    print(f'Accuracy score: {round(100 * accuracy_dt, 2)}%')
+    print(f'Recall: {round(100 * cm_dt[0][0] / (cm_dt[0][0] + cm_dt[1][0]), 2)}')
+    print(f'Precision: {round(100 * cm_dt[0][0] / (cm_dt[0][0] + cm_dt[0][1]), 2)}')
+    print(f'NPV: {round(100 * cm_dt[1][0] / (cm_dt[1][0] + cm_dt[1][1]), 2)}')
+    print('\n')

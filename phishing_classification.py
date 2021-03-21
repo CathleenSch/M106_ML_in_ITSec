@@ -1,5 +1,5 @@
 
-# phishing - classification . py
+# phishing-classification.py
 
 
 # (1) Importieren der Bibliotheken
@@ -32,5 +32,6 @@ def decision_tree_train_and_predict(filename):
     predictions = classifier.predict(testing_inputs)
 
     # (8) Bewertung des Modells ( Genauigkeit )
-    data = [confusion_matrix, predictions, testing_outputs]
+    cm = confusion_matrix(testing_outputs, predictions)
+    data = [cm, predictions, testing_outputs]
     return data

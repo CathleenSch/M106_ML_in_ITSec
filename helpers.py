@@ -21,3 +21,4 @@ def get_request(url):
         return res
     except:
         return None
+
