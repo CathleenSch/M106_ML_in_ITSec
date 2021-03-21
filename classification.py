@@ -1,10 +1,7 @@
 import numpy as np
 import pandas as pd
-import time
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 from phishing_classification import decision_tree_train_and_predict
 
@@ -57,12 +54,12 @@ for trainingdata_file in data_files:
     print(f'Accuracy score: {round(100 * accuracy_rf, 2)}%')
     print(f'Recall: {round(100 * cm_rf[0][0] / (cm_rf[0][0] + cm_rf[1][0]), 2)}')
     print(f'Precision: {round(100 * cm_rf[0][0] / (cm_rf[0][0] + cm_rf[0][1]), 2)}')
-    print(f'NPV: {round(100 * cm_rf[1][0] / (cm_rf[1][0] + cm_rf[1][1]), 2)}')
+    print(f'NPV: {round(100 * cm_rf[1][1] / (cm_rf[1][0] + cm_rf[1][1]), 2)}')
     print('\n')
 
     print(f'Decision Tree, {trainingdata_file}')
     print(f'Accuracy score: {round(100 * accuracy_dt, 2)}%')
     print(f'Recall: {round(100 * cm_dt[0][0] / (cm_dt[0][0] + cm_dt[1][0]), 2)}')
     print(f'Precision: {round(100 * cm_dt[0][0] / (cm_dt[0][0] + cm_dt[0][1]), 2)}')
-    print(f'NPV: {round(100 * cm_dt[1][0] / (cm_dt[1][0] + cm_dt[1][1]), 2)}')
+    print(f'NPV: {round(100 * cm_dt[1][1] / (cm_dt[1][0] + cm_dt[1][1]), 2)}')
     print('\n')
