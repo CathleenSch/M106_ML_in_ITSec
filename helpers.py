@@ -1,6 +1,5 @@
 import socket
 import requests
-import asyncio
 
 async def isPortOpen(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,7 +15,7 @@ async def isPortOpen(host, port):
 
 def get_request(url):
     try:
-        req = requests.get(url)
+        req = requests.get(url, timeout=3)
         return req
     except:
         return None

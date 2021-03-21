@@ -36,36 +36,4 @@ def get_lists_of_websites():
     file_write.writelines(url_list)
     file_write.close()
 
-def get_average_URL_length(isPhishing):
-    if isPhishing:
-        filename = 'phishing_sites.txt'
-    else:
-        filename = 'valid_sites.txt'
-    file_write = open(os.path.join(URL_lists_folder, filename), encoding='utf-8', mode='r')
-    urls = file_write.readlines()
-    url_count = len(urls)
-    url_sum = 0
-    url_max_len = 0
-    longest = ''
-    shortest = ''
-    url_min_len = 75
-    for url in urls:
-        length = len(url)
-        if length > url_max_len:
-            url_max_len = length
-            longest = url
-        if length < url_min_len:
-            url_min_len = length
-            shortest = url
-        url_sum += length
-    
-    average_len = url_sum / url_count
-
-    return(average_len)
-
-def print_average_URL_lengths():
-    average_benign = get_average_URL_length(False)
-    average_malicious = get_average_URL_length(True)
-
-    print('Durchschnittliche URL-Länge valider Webseiten:\t\t' + str(average_benign))
-    print('Durchschnittliche URL-Länge von Phishing-Webseiten:\t' + str(average_malicious))
+get_lists_of_websites()
