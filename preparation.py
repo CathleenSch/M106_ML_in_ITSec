@@ -11,7 +11,7 @@ def get_column_of_csv_file(file):
     return saved_column
 
 def get_lists_of_websites():
-    # create list of valid, non-malicious websites from csv files
+    # Liste der validen Links aus CSV erstellen
     valid_list_folder = os.path.join(sources_folder, 'Valid_Sites')
     url_list = []
     for filename in os.listdir(valid_list_folder):
@@ -25,7 +25,7 @@ def get_lists_of_websites():
     file_write.close()
 
 
-    # create list of phishing websites from csv
+    # Liste von Phishing-Links aus CSV erstellen
     url_list = []
     phishing_list_file = os.path.join(sources_folder, 'verified_online.csv')
     column = get_column_of_csv_file(phishing_list_file)

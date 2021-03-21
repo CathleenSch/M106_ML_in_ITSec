@@ -99,7 +99,7 @@ def extract_features_from_urls(url_file , link_type):
         # Trainingsdaten-Datei oeffnen
         file_trainingdata = open(trainingdata_file, encoding='utf-8', mode='a')
         
-        print(f'Processing phishing URL {index+1} of {len(urls)}: {url}')
+        print(f'Processing {link_type} URL {index+1} of {len(urls)}: {url}')
         # "\n" abschneiden
         url = url[:len(url)-2]
         # HTTP-Request an URL absetzen, da fuer einige Features benoetigt
@@ -128,7 +128,7 @@ def extract_features_from_urls(url_file , link_type):
         features += ',' + str(Result) + '\n'
         file_trainingdata.write(features)
 
-# empty_trainingdata_file()
+empty_trainingdata_file()
 
-# extract_features_from_urls(phishing_sites_file, 'phishing')
+extract_features_from_urls(phishing_sites_file, 'phishing')
 extract_features_from_urls(valid_sites_file, 'valid')

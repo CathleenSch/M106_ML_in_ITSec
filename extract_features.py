@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 def check_having_IP_Address(url):
     print('checking for IP address')
-    # Regulärer Ausdruck für IP-Adresse als Zahlen oder Hexcode
+    # Regulaerer Ausdruck fuer IP-Adresse als Zahlen oder Hexcode
     result = re.search('(?<=\/\/)(([0-9]+x?[A-z0-9]+)\.?)+', url)
     if result:
         return 1
@@ -18,7 +18,7 @@ def check_having_IP_Address(url):
 
 def check_URL_Length(url):
     print('checking url length')
-    # Länge der URL prüfen
+    # Laenge der URL pruefen
     length = len(url)
     if length < 54:
         return -1
@@ -28,11 +28,11 @@ def check_URL_Length(url):
         return 1
 
 def check_Shortening_Service(url):
-    # Liste von häufig genutzten URL-Verkürzungsservices
+    # Liste von haeufig genutzten URL-Verkuerzungsservices
     url_shortening_services = ['7.ly', 'adf.ly', 'admy.link', 'al.ly', 'bc.v', 'bit.do', 'doiop.com', 'fur.ly', 'fave.co', 'is.gd', 'lnked.in', 'lynk.my', 'mcaf.ee', 'ouo.io', 'ow.ly', 'ph.dog', 'qr.net', 's.id', 'shrinkee.com', 'shrinkurl.in', 'sptfy.com', 'thinfi.com', 'tiny.cc', 'tinyurl.com', 'tny.im', 'flic.kr', 'v.gd', 'y2u.be', 'zi.ma', 'zzb.bz', 'adfoc.us', 'bit.ly', 'cur.lv', 'git.io', 'goo.gl', 'hec.su', 'sh.st', 'tldrify.com', 'tr.im']
 
     print('checking for shortening service')
-    # prüfen, ob Verkürzungsservice-Domain in URL vorkommt
+    # pruefen, ob Verkuerzungsservice-Domain in URL vorkommt
     for name in url_shortening_services:
         if name in url:
             return 1
@@ -40,7 +40,7 @@ def check_Shortening_Service(url):
 
 def check_having_At_symbol(url):
     print('checking for @ in url')
-    # URL auf @ prüfen
+    # URL auf @ pruefen
     if '@' in url:
         return 1
     else:
@@ -48,7 +48,7 @@ def check_having_At_symbol(url):
 
 def check_double_slash_redirecting(url):
     print('checking for // redirect')
-    # prüfen, ob mehr als einmal '//' in URL enthalten ist (also über http:// hinaus)
+    # pruefen, ob mehr als einmal '//' in URL enthalten ist (also ueber http:// hinaus)
     ds_count = url.count('//')
     if ds_count > 1:
         return 1
@@ -57,7 +57,7 @@ def check_double_slash_redirecting(url):
 
 def check_Prefix_Suffix(url):
     print('checking for prefix/ suffix')
-    # URL parsen und prüfen, ob '-' enthalten ist 
+    # URL parsen und pruefen, ob '-' enthalten ist 
     hostname = parse.urlparse(url).hostname
     if '-' in hostname:
         return 1
@@ -71,7 +71,7 @@ def check_having_Sub_Domain(url):
     if 'www.' in hostname:
         hostname = hostname[4:]
     
-    # Punkte in Domain zählen
+    # Punkte in Domain zaehlen
     dot_count = hostname.count('.')
     if dot_count == 1:
         return -1
@@ -92,7 +92,7 @@ def check_Domain_registration_length(w):
         if isinstance(expires, list):
             expires = expires[0]
         
-        # berechnen, in wie vielen Tagen die Domain ausläuft
+        # berechnen, in wie vielen Tagen die Domain auslaeuft
         today = datetime.today()
         delta = expires - today
         if delta.days <= 365:
@@ -111,10 +111,10 @@ def check_Favicon(url, res):
     html = res.text
     soup = bs4.BeautifulSoup(html, 'html.parser')
     icon_link = None
-    # typische Namen für Favicon in HTML
+    # typische Namen fuer Favicon in HTML
     icon_names = ['shortcut icon', 'icon', 'Icon']
     i = 0
-    # prüfen, ob einer dieser Namen im HTML zu finden ist
+    # pruefen, ob einer dieser Namen im HTML zu finden ist
     while icon_link == None and i < 3:
         icon_link = soup.find('link', rel=icon_names[i])
         i += 1
@@ -136,10 +136,10 @@ def check_Favicon(url, res):
 
 async def check_port(url):
     print('checking for open ports')
-    # Liste zu überprüfender Ports
+    # Liste zu ueberpruefender Ports
     ports = [21, 22, 23, 445, 1433, 1521, 3306, 3389]
     try:
-        # Anfragen für alle Ports gleichzeitig asynchron schicken (an ausgelagerte Funktion in helpers.py)
+        # Anfragen fuer alle Ports gleichzeitig asynchron schicken (an ausgelagerte Funktion in helpers.py)
         host = parse.urlparse(url).hostname
         open_ports = await asyncio.gather(*(isPortOpen(host, port) for port in ports))        
         if 1 in open_ports:
@@ -153,7 +153,7 @@ async def check_port(url):
 
 def check_HTTPS_token(url):
     print('checking for http/s in domain')
-    # URL parsen und prüfen, ob http(s) in Domain vorkommt
+    # URL parsen und pruefen, ob http(s) in Domain vorkommt
     hostname = parse.urlparse(url).hostname
     if 'https' in hostname or 'http' in hostname:
         return 1
@@ -169,7 +169,7 @@ def check_Request_URL(url, res):
     links = re.findall('"((http|ftp)s?://.*?)"', html)
     link_count = len(links)
     mal_link_sum = 0
-    # jeden Link auf Domain überprüfen und prozentualen Anteil der externen Domains berechnen
+    # jeden Link auf Domain ueberpruefen und prozentualen Anteil der externen Domains berechnen
     if link_count > 0:
         for link in links:
             link = link[0]
@@ -196,7 +196,7 @@ def check_URL_of_Anchor(url, res):
     a_tags = soup.find_all('a')
     a_tags_count = len(a_tags)
     mal_tags_sum = 0
-    # für jeden Tag prüfen, ob Link oder anderer bestimmter String enthalten ist, dann Domain prüfen
+    # fuer jeden Tag pruefen, ob Link oder anderer bestimmter String enthalten ist, dann Domain pruefen
     if a_tags_count > 0:
         for tag in a_tags:
             link = tag.get('href')
@@ -212,7 +212,7 @@ def check_URL_of_Anchor(url, res):
     else:
         return -1
 
-    # prozentualen Anteil verdächtiger Tags berechnen
+    # prozentualen Anteil verdaechtiger Tags berechnen
     percentage = mal_tags_sum * 100 / a_tags_count
     if percentage < 31:
         return -1
@@ -235,8 +235,8 @@ def check_Links_in_tags(url, res):
     tags_count = len(meta_tags) + len(meta_tags) + len(link_tags)
     mal_tags_sum = 0
     
-    # über gefundene Tags iterieren und auf Attribute überprüfen, die URLs enthalten können
-    # dann Domain prüfen
+    # ueber gefundene Tags iterieren und auf Attribute ueberpruefen, die URLs enthalten koennen
+    # dann Domain pruefen
     if tags_count > 0:
         for tag_type in (meta_tags, script_tags, link_tags):
             for tag in tag_type:
@@ -250,7 +250,7 @@ def check_Links_in_tags(url, res):
                         if link_hostname != hostname:
                             mal_tags_sum += 1
         
-        # prozentualen Anteil verdächtiger Tags berechnen
+        # prozentualen Anteil verdaechtiger Tags berechnen
         percentage = mal_tags_sum * 100 / tags_count
         if percentage < 17:
             return -1
@@ -272,7 +272,7 @@ def check_Abnormal_URL(url):
 
 def check_Redirect(res):
     print('checking for redirects')
-    # History des HTTP-Requests auf ihre Länge prüfen (>1: redirect)
+    # History des HTTP-Requests auf ihre Laenge pruefen (>1: redirect)
     redirects = len(res.history)
     if redirects <= 1:
         return -1
@@ -283,7 +283,7 @@ def check_Redirect(res):
 
 def check_on_mouseover(url, res):
     print('checking for status bar change onMouseover')
-    # HTML verarbeiten und auf onMouseOver-Event prüfen, das die Statusbar ändert
+    # HTML verarbeiten und auf onMouseOver-Event pruefen, das die Statusbar aendert
     html = res.text
     if 'onmouseover="window.status=' in html:
         return 1
@@ -292,7 +292,7 @@ def check_on_mouseover(url, res):
 
 def check_RightClick(url, res):
     print('checking for right click prevention')
-    # HTML verarbeiten und auf Event prüfen, das Rechtsklick verhindert
+    # HTML verarbeiten und auf Event pruefen, das Rechtsklick verhindert
     html = res.text
     if 'event.button==2' in html:
         return 1
@@ -311,7 +311,7 @@ def check_Iframe(url, res):
     # alle iFrames finden
     iframes = soup.findAll('iframe')
     malicious_iframes_found = 0
-    # Quellen der iFrames auf Domain prüfen
+    # Quellen der iFrames auf Domain pruefen
     for iframe in iframes:
         link = iframe.get('src')
         if link and link.startswith('http'):

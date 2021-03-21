@@ -7,7 +7,7 @@ from sklearn import tree
 from sklearn . metrics import accuracy_score
 
 # (2) Trainingsdaten aus CSV laden
-training_data = np . genfromtxt (' phishing_training_data.csv ', delimiter =',', dtype = np . int32 )
+training_data = np . genfromtxt ('trainingdata.csv ', delimiter =',', dtype = np . int32 )
 
 # (3) Unterteilung in Eingabe - und Ausgabedaten
 inputs = training_data [: ,: -1]
@@ -23,7 +23,7 @@ testing_outputs = outputs [2000:]
 classifier = tree . DecisionTreeClassifier ()
 
 # (6) Trainieren des Modells
-classifier . fit ( training_inputs , training_outputs )
+classifier.fit( training_inputs , training_outputs )
 
 # (7) Berechnen der Vorhersagen
 predictions = classifier . predict ( testing_inputs )
