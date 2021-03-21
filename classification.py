@@ -6,64 +6,69 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
+from phishing_classificaton import decision_tree_train_and_predict
 
-# Daten einlesen
-features = pd.read_csv('sources/Training_Dataset.csv')
-# Labels extrahieren: letzte Spalte 'Result', die bestimmt ob ein Eintrag Phsihing ist oder nicht
-labels = np.array(features['Result'])
-# Spalte mit den Labels aus den Features entfernen
-features = features.drop('Result', axis = 1)
-# Liste der Features aus den Namen der Spalten machen
-feature_list = list(features.columns)
-# Features zu einem Array machen
-features = np.array(features)
+data_files = ['Sources/Training_Dataset.csv', 'trainingdata.csv']
 
-# Daten in Traings- und Testdaten unterteilen
-train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size = 0.25, random_state = 42)
+def read_data(filename):
+    # Daten einlesen
+    features = pd.read_csv(filename)
+    # Labels extrahieren: letzte Spalte 'Result', die bestimmt ob ein Eintrag Phishing ist oder nicht
+    labels = np.array(features['Result'])
+    # Spalte mit den Labels aus den Features entfernen
+    features = features.drop('Result', axis = 1)
+    # Liste der Features aus den Namen der Spalten machen
+    feature_list = list(features.columns)
+    # Features zu einem Array machen
+    features = np.array(features)
+    return [features, labels]
 
-# Modell instanziieren
-rf = RandomForestClassifier(n_estimators = 1000, random_state = 42)
-# Trainieren
-rf_training_start = time.time()
-rf.fit(train_features, train_labels)
-rf_training_stop = time.time()
-# Testen
-rf_pred_start = time.time()
-rf_predictions = rf.predict(test_features)
-rf_pred_stop = time.time()
-# Zeiten berechnen
-rf_training_time = rf_training_stop - rf_training_start
-rf_pred_time = rf_pred_stop - rf_training_start
-# Output
-rf_confusion_matrix = metrics.confusion_matrix(test_labels, rf_predictions)
-print('Random Forest Classification')
-print(f'Training time: {round(rf_training_time, 2)}s')
-print(f'Prediction time: {round(rf_pred_time, 2)}s\n')
-print(metrics.classification_report(test_labels, rf_predictions))
-print('\n\n')
+def train_and_predict(features, labels):
+    # Daten in Traings- und Testdaten unterteilen
+    train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size = 0.25, random_state = 42)
+    
+    # Modell instanziieren
+    classifier = RandomForestClassifier(n_estimators = 1000, random_state = 42)
+    # Trainieren
+    classifier.fit(train_features, train_labels)
 
-# Modell instanziieren
-logreg = LogisticRegression()
-# Trainieren
-logreg_training_start = time.time()
-logreg.fit(train_features, train_labels)
-logreg_training_stop = time.time()
-# Testen
-logreg_pred_start = time.time()
-logreg_predictions = logreg.predict(test_features)
-logreg_pred_stop = time.time()
-# Zeiten berechnen
-logreg_training_time = logreg_training_stop - logreg_training_start
-logreg_pred_time = logreg_pred_stop - logreg_pred_start
-#Output
-logreg_confusion_matrix = metrics.confusion_matrix(test_labels, logreg_predictions)
-print('Logistic Regression')
-print(f'Training time: {round(logreg_training_time, 2)}s')
-print(f'Prediction time: {round(logreg_pred_time, 2)}s\n')
-print(metrics.classification_report(test_labels, logreg_predictions))
-print('\n\n')
+    # Testen
+    predictions = classifier.predict(test_features)
+    
+    # Wahrheitsmatrix erstellen
+    confusion_matrix = metrics.confusion_matrix(test_labels, predictions)
+
+    data = [confusion_matrix, predictions, test_labels]
+    return data
 
 
+for trainingdata_file in data_files:
+    csv_data = read_data(trainingdata_file)
+    data = train_and_predict()
+
+
+csv_data = read_data('trainingdata.csv')
+data = train_and_predict('rf', csv_data[0], csv_data[1])
+accuracy = metrics.accuracy_score(data[4], data[3])
+print('Accuracy: ', str(accuracy), '%')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
 # Plotting
 print(rf_confusion_matrix)
 rf_recall = rf_confusion_matrix[0][0] / (rf_confusion_matrix[0][0] + rf_confusion_matrix[1][0])
@@ -75,3 +80,4 @@ plt.xlabel('Algorithm used')
 plt.ylabel('Precision')
 
 # plt.show()
+"""

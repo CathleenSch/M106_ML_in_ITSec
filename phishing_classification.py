@@ -1,34 +1,36 @@
 
 # phishing - classification . py
 
+
 # (1) Importieren der Bibliotheken
 import numpy as np
 from sklearn import tree
-from sklearn . metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 
-# (2) Trainingsdaten aus CSV laden
-training_data = np . genfromtxt ('trainingdata.csv ', delimiter =',', dtype = np . int32 )
 
-# (3) Unterteilung in Eingabe - und Ausgabedaten
-inputs = training_data [: ,: -1]
-outputs = training_data [: , -1]
+def decision_tree_train_and_predict(filename):
+    # (2) Trainingsdaten aus CSV laden
+    training_data = np.genfromtxt(filename, delimiter =',', dtype=np.int32)
 
-# (4) Unterteilung der Daten in Trainings - und Testdaten
-training_inputs = inputs [:2000]
-training_outputs = outputs [:2000]
-testing_inputs = inputs [2000:]
-testing_outputs = outputs [2000:]
+    # (3) Unterteilung in Eingabe - und Ausgabedaten
+    inputs = training_data[:,:-1]
+    outputs = training_data[:,-1]
 
-# (5) Erstellen des Klassifizierungsmodells Entscheidungsbaum
-classifier = tree . DecisionTreeClassifier ()
+    # (4) Unterteilung der Daten in Trainings - und Testdaten
+    training_inputs = inputs[:2000]
+    training_outputs = outputs[:2000]
+    testing_inputs = inputs[2000:]
+    testing_outputs = outputs[2000:]
 
-# (6) Trainieren des Modells
-classifier.fit( training_inputs , training_outputs )
+    # (5) Erstellen des Klassifizierungsmodells Entscheidungsbaum
+    classifier = tree.DecisionTreeClassifier()
 
-# (7) Berechnen der Vorhersagen
-predictions = classifier . predict ( testing_inputs )
+    # (6) Trainieren des Modells
+    classifier.fit(training_inputs, training_outputs)
 
-# (8) Bewertung des Modells ( Genauigkeit )
-accuracy = 100.0 * accuracy_score ( testing_outputs ,predictions )
+    # (7) Berechnen der Vorhersagen
+    predictions = classifier.predict(testing_inputs)
 
-print (" Die Genauigkeit des Entscheidungsbaum - Modellsbeträgt " + str ( accuracy ) +"%")
+    # (8) Bewertung des Modells ( Genauigkeit )
+    data = [confusion_matrix, predictions, testing_outputs]
+    return data
